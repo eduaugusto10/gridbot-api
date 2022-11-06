@@ -1,23 +1,30 @@
 import { Request, Response } from "express";
+import { BadRequestError } from "../helpers/api-errors";
 import { masterOrdersRepository } from "../repositories/MasterOrdersRepository";
 import { slaveOrdersRepository } from "../repositories/SlaveOrdersRepository";
+import { userRepository } from "../repositories/UserRepository";
 
 
 export class SlaveOrdersController {
     async createOrUpdate(req: Request, res: Response) {
-        const { magicNumber, symbol, quantity } = req.body
+        const { magicNumber, symbol, quantity, slaveOrders } = req.body
 
         const orders = await slaveOrdersRepository.findbyMagicNumberSymbol(magicNumber, symbol)
+        const user = await userRepository.findOneBy({ id: Number(slaveOrders) })
+        if (!user) {
+            throw new BadRequestError("Usuário não encontrado")
+        }
 
         if (orders[0] == undefined) {
             const newOrders = slaveOrdersRepository.create({
                 magicNumber,
                 symbol,
-                quantity
+                quantity,
+                slaveOrders
             })
 
             await slaveOrdersRepository.save(newOrders)
-            return res.send(200)
+            return res.send()
         }
 
         await slaveOrdersRepository.update(orders[0].id, {

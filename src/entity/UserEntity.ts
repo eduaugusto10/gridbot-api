@@ -1,4 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from "typeorm"
+import { BotCustomerEntity } from "./BotCustomerEntity"
+import { BotEntity } from "./BotEntity"
+import { SlaveOrdersEntity } from "./SlaveOrdersEntity"
 
 @Entity('tbuser')
 export class UserEntity {

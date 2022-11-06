@@ -1,4 +1,6 @@
 import { Router } from "express";
+import { BotController } from "../controllers/BotController";
+import { BotCustomerAssign } from "../controllers/BotCustomerAssign";
 import { MasterOrdersController } from "../controllers/MasterOrdersController";
 import { OrderController } from "../controllers/OrderController";
 import { SessionController } from "../controllers/SessionController";
@@ -33,5 +35,18 @@ routes.get('/order/:id', new OrderController().getById)
 routes.get('/order', new OrderController().getAll)
 routes.put('/order/:id', new OrderController().update)
 routes.delete('/order/:id', new OrderController().delete)
+
+// Magic Number
+routes.post('/bot', new BotController().store)
+routes.get('/bot', new BotController().getAll)
+routes.get('/bot/:id', new BotController().getById)
+routes.put('/bot/:id', new BotController().update)
+routes.delete('/bot/:id', new BotController().delete)
+
+// Magic Number by Customer
+routes.post('/botcustomer', new BotCustomerAssign().store)
+routes.get('/botcustomer/:customer', new BotCustomerAssign().getAllByCustomer)
+routes.put('/botcustomer/:id', new BotCustomerAssign().update)
+routes.delete('/botcustomer/:id', new BotCustomerAssign().delete)
 
 export default routes

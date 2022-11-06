@@ -1,24 +1,25 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { UserEntity } from "./UserEntity";
 
-@Entity('tbslaveorders')
-export class SlaveOrdersEntity {
+
+@Entity('tbbotcustomer')
+export class BotCustomerEntity {
 
     @PrimaryGeneratedColumn()
     id: number
 
+    @ManyToOne(() => UserEntity, (user) => user.id)
+    customerBot: UserEntity
+
     @Column({ type: 'integer' })
     magicNumber: number
 
-    @Column('varchar', { length: '20' })
-    symbol: string
+    @Column({ type: 'integer' })
+    lote: number
 
-    @Column({type:'integer'})
-    quantity: number
+    @Column({ type: 'date' })
+    validate: Date
 
-    @ManyToOne(() => UserEntity, (user) => user.id)
-    slaveOrders: UserEntity
-        
     @CreateDateColumn()
     create_at: Date
 

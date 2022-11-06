@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { BadRequestError } from "../helpers/api-errors";
 import { userRepository } from "../repositories/UserRepository";
 import bcrypt from 'bcrypt'
+import { botCustomerAssignRepository } from "../repositories/BotCustomerAssign";
 
 
 export class UserController {
@@ -62,12 +63,18 @@ export class UserController {
         if (!user) {
             throw new BadRequestError("Usuário não encontrado.")
         }
-        const validateStatus = today < user.validate ? true : false
-        const configuration = {
-            multiplier: user.multiplier,
-            validateStatus,
+
+        const bots = await botCustomerAssignRepository.findAllByCustomer(user.id)
+
+        if (!bots) {
+            throw new BadRequestError("Nenhum bot cadastrado")
         }
-        return res.json(configuration)
+        for (let i = 0; i < bots.length; i++) {
+            bots[i].validateStatus = today < bots[i].validate ? true : false
+        }
+
+        const bot = { "bot": bots, "length": bots.length }
+        return res.json(bot)
     }
 
     async getAll(req: Request, res: Response) {
@@ -96,7 +103,7 @@ export class UserController {
         if (!user) {
             throw new BadRequestError("Nenhum usuário encontrado")
         }
-        
+
         await userRepository.update(parseInt(id), {
             name,
             email,
