@@ -27,11 +27,8 @@ export class UserEntity {
     @Column("varchar", { length: '20' })
     administrator: string
 
-    @Column({ type: 'float' })
-    multiplier: number
-
-    @Column({ type: 'date' })
-    validate: Date
+    @Column({ type: 'varchar' })
+    broker: string
 
     @CreateDateColumn()
     create_at: Date

@@ -13,9 +13,8 @@ export class UserController {
             password,
             account,
             phone,
-            multiplier,
-            administrator,
-            validate
+            broker,
+            administrator            
         } = req.body
 
         const userExists = await userRepository.findOneBy({ email })
@@ -33,8 +32,7 @@ export class UserController {
             phone,
             password: hashPass,
             administrator,
-            multiplier,
-            validate
+            broker
         })
 
         await userRepository.save(newUser)
@@ -95,8 +93,7 @@ export class UserController {
             account,
             phone,
             administrator,
-            multiplier,
-            validate
+            broker
         } = req.body
 
         const user = await userRepository.findOneBy({ id: Number(id) })
@@ -110,8 +107,7 @@ export class UserController {
             account,
             phone,
             administrator,
-            multiplier,
-            validate
+            broker
         })
 
         return res.send()
