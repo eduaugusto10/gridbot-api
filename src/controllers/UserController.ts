@@ -3,6 +3,8 @@ import { BadRequestError } from "../helpers/api-errors";
 import { userRepository } from "../repositories/UserRepository";
 import bcrypt from 'bcrypt'
 import { botCustomerAssignRepository } from "../repositories/BotCustomerAssign";
+import { masterOrdersRepository } from "../repositories/MasterOrdersRepository";
+import { slaveOrdersRepository } from "../repositories/SlaveOrdersRepository";
 
 
 export class UserController {
@@ -14,7 +16,7 @@ export class UserController {
             account,
             phone,
             broker,
-            administrator            
+            administrator
         } = req.body
 
         const userExists = await userRepository.findOneBy({ email })
@@ -76,12 +78,25 @@ export class UserController {
     }
 
     async getAll(req: Request, res: Response) {
+
+        const ordersMaster = await masterOrdersRepository.findByToday()
+        const ordersSlave = await slaveOrdersRepository.findByToday()
+
+        for (let i = 0; i < ordersMaster.length; i++) {
+            for (let j = 0; j < ordersSlave.length; j++) {
+                if (ordersMaster[i].magicNumber === ordersSlave[j].magicNumber && ordersMaster[i].symbol == ordersSlave[j].symbol) {
+                    if (ordersMaster[i].quantity == ordersSlave[j].quantity) ordersSlave[j]["status"] = "OK"
+                    if (ordersMaster[i].quantity < ordersSlave[j].quantity)  ordersSlave[j]["status"] = "NOK"
+                }
+            }
+        }
+
         const users = await userRepository.find()
         if (!users) {
             throw new BadRequestError("Nenhum usuário encontrado")
         }
 
-        return res.json(users)
+        return res.json({ users, ordersSlave })
     }
 
     async update(req: Request, res: Response) {

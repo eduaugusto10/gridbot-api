@@ -7,10 +7,10 @@ import { userRepository } from "../repositories/UserRepository";
 
 export class SlaveOrdersController {
     async createOrUpdate(req: Request, res: Response) {
-        const { magicNumber, symbol, quantity, slaveOrders } = req.body
+        const { magicNumber, symbol, quantity, account } = req.body
 
         const orders = await slaveOrdersRepository.findbyMagicNumberSymbol(magicNumber, symbol)
-        const user = await userRepository.findOneBy({ id: Number(slaveOrders) })
+        const user = await userRepository.findOneBy({ account })
         if (!user) {
             throw new BadRequestError("Usuário não encontrado")
         }
@@ -20,7 +20,7 @@ export class SlaveOrdersController {
                 magicNumber,
                 symbol,
                 quantity,
-                slaveOrders
+                slaveOrders:user.id
             })
 
             await slaveOrdersRepository.save(newOrders)
@@ -43,7 +43,7 @@ export class SlaveOrdersController {
             for (let j = 0; j < ordersSlave.length; j++) {
                 if (ordersMaster[i].magicNumber === ordersSlave[j].magicNumber && ordersMaster[i].symbol == ordersSlave[j].symbol) {
                     if (ordersMaster[i].quantity == ordersSlave[j].quantity) ordersSlave[j]["status"] = "OK"
-                    if (ordersMaster[i].quantity < ordersSlave[j].quantity) ordersSlave[j]["status"] = "NOK"
+                    else ordersSlave[j]["status"] = "NOK"
                 }
             }
         }

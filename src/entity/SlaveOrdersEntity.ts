@@ -16,8 +16,8 @@ export class SlaveOrdersEntity {
     @Column({type:'integer'})
     quantity: number
 
-    @ManyToOne(() => UserEntity, (user) => user.id)
-    slaveOrders: UserEntity
+    @Column({type:'integer'})
+    slaveOrders: number
         
     @CreateDateColumn()
     create_at: Date
